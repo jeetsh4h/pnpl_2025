@@ -2,7 +2,12 @@ from pathlib import Path
 
 PHONEME_PATH = Path(__file__).parent
 DATA_DIR = PHONEME_PATH.parent / "data"
+FIGURE_DIR = PHONEME_PATH.parent / "figures"
+TRAINING_ARTIFACTS_DIR = PHONEME_PATH.parent / "training_artifacts"
+
+# this should be changed based on system
 NUM_WORKERS = 4
+BATCH_SIZE = 64
 
 # taken from the notebook
 SENSORS_SPEECH_MASK = [
