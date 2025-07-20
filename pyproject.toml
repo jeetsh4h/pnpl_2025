@@ -1,0 +1,17 @@
+[project]
+name = "pnpl-2025"
+version = "0.1.0"
+description = "PNPL 2025 competition. Part of the NeurIPS 2025 competition track. Currently working on Phase I (standard)."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.10.3",
+    "pnpl>=0.0.4",
+    "scikit-learn>=1.7.1",
+    "torchvision>=0.22.1",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+]
