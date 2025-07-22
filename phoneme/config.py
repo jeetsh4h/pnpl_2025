@@ -3,7 +3,7 @@ from pathlib import Path
 PHONEME_PATH = Path(__file__).parent
 DATA_DIR = PHONEME_PATH.parent / "data"
 FIGURE_DIR = PHONEME_PATH.parent / "figures"
-TRAINING_ARTIFACTS_DIR = PHONEME_PATH.parent / "training_artifacts"
+TRAINING_ARTIFACTS_DIR = DATA_DIR / "training_artifacts"
 
 # this should be changed based on system
 NUM_WORKERS = 4

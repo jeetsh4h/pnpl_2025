@@ -17,7 +17,12 @@ Train a model to distinguish speech vs. silence based on brain activity measured
 - [x] Save the data in /mnt/cai-data and then make a symlink to it
 - [x] Download *all* the data
 - [x] Train the default model given in the notebook
+- [ ] Perform EDA to check differences between both labels
+  - [ ] Check mean, min, max, p95 of channels between the two labels
+  - [ ] Make a histogram of it
+  - [ ] Save it in a CSV
 - [ ] Feature engineer the data
-    - [ ] mean and p95 of the modulus of the data (per sample, per channel)
-    - [ ] mean and p95 of the product of the modulus of a sample for pairwise channels
-    - [ ] save the feature engineered data within a human-readable file (csv)
+  - [ ] mean and p95 of the modulus of the data (per sample, per channel)
+  - [ ] correlation coefficient between channels
+  - [ ] save the feature engineered data within a human-readable file (csv)
+- [ ] Train a XGBoost model on this data
