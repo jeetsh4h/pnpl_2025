@@ -4,7 +4,7 @@ import datetime as dt
 from torch.utils.data import DataLoader
 from pnpl.datasets import LibriBrainSpeech
 from lightning.pytorch.loggers import CSVLogger
-from lightning.pytorch.callbacks import EarlyStopping
+from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
 
 
 from utils import FilteredDataset
@@ -18,6 +18,7 @@ from config import (
 )
 
 
+# TODO: create submission file right after training
 def train(
     train_loader: DataLoader,
     val_loader: DataLoader,
@@ -27,13 +28,14 @@ def train(
     torch.set_float32_matmul_precision("medium")
     L.seed_everything(42)
 
+    CURR_DATE = dt.datetime.now().strftime("%d-%m_%H-%M")
     LOG_DIR = TRAINING_ARTIFACTS_DIR / "logs"
-    CHECKPOINT_PATH = TRAINING_ARTIFACTS_DIR / "checkpoints" / "notebook_model.ckpt"
+    CHECKPOINT_PATH = TRAINING_ARTIFACTS_DIR / "checkpoints" / CURR_DATE
 
     logger = CSVLogger(
         save_dir=LOG_DIR,
         name="notebook_model",
-        version=f"{dt.datetime.now().strftime('%d-%m_%H-%M')}",
+        version=CURR_DATE,
     )
 
     model = SpeechClassifier(
@@ -54,15 +56,23 @@ def train(
         monitor="val_loss", min_delta=0.00, patience=10, verbose=True, mode="min"
     )
 
+    checkpoint_callback = ModelCheckpoint(
+        dirpath=CHECKPOINT_PATH,
+        filename="{epoch}-{val_loss:.2f}_notebook_model",
+        monitor="val_loss",
+        mode="min",
+        save_top_k=3,
+        save_last=True,
+    )
+
     trainer = L.Trainer(
         max_epochs=25,
         logger=logger,
         enable_checkpointing=True,
-        callbacks=[early_stopping_callback],
+        callbacks=[early_stopping_callback, checkpoint_callback],
     )
 
     trainer.fit(model, train_loader, val_loader)
-    trainer.save_checkpoint(CHECKPOINT_PATH)
     trainer.test(model, test_loader)
 
 

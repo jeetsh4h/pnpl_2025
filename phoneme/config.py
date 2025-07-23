@@ -3,10 +3,11 @@ from pathlib import Path
 PHONEME_PATH = Path(__file__).parent
 DATA_DIR = PHONEME_PATH.parent / "data"
 FIGURE_DIR = PHONEME_PATH.parent / "figures"
+SUBMISSIONS_DIR = PHONEME_PATH.parent / "submissions"
 TRAINING_ARTIFACTS_DIR = DATA_DIR / "training_artifacts"
 
 # this should be changed based on system
-NUM_WORKERS = 4
+NUM_WORKERS = 6
 BATCH_SIZE = 64
 
 # taken from the notebook
@@ -36,4 +37,4 @@ SENSORS_SPEECH_MASK = [
     275,
 ]
 
-EXAMPLE_SENSORS_MASK = [20, 140, 176, 272]
+VISUALIZE_SENSORS_MASK = [20, 140, 176, 272]

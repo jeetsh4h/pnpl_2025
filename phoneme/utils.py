@@ -1,9 +1,11 @@
+import torch
 import random
 import numpy as np
 from mne import create_info
-from pnpl.datasets import LibriBrainSpeech
+from pnpl.datasets import LibriBrainSpeech, LibriBrainCompetitionHoldout
 
 from h5py import File
+from torch import Tensor
 from typing import Literal
 from mne._fiff.meas_info import Info
 from h5py import Dataset as h_Dataset
@@ -86,3 +88,56 @@ class FilteredDataset(t_Dataset):
             sensors = self.dataset[original_idx][0][:]
         label_from_the_middle_idx = self.dataset[original_idx][1].shape[0] // 2
         return [sensors, self.dataset[original_idx][1][label_from_the_middle_idx]]
+
+
+class SimpleHoldoutWrapper(t_Dataset):
+    """
+    Simple wrapper that categorizes samples as full vs incomplete.
+    """
+
+    def __init__(self, holdout_dataset: LibriBrainCompetitionHoldout):
+        self.holdout_dataset = holdout_dataset
+
+    def __len__(self):
+        return len(self.holdout_dataset)
+
+    def __getitem__(
+        self, idx
+    ) -> tuple[Tensor, Literal["full", "incomplete"]] | tuple[None, Literal["error"]]:
+        try:
+            sample: Tensor = self.holdout_dataset[idx]  # type: ignore
+
+            # timepoints == 200 most of the times
+            # less some of the other times
+            meg_data = sample[0]  # Shape: (306, timepoints)
+            timepoints = meg_data.shape[1]
+
+            return (meg_data, "full" if timepoints == 200 else "incomplete")
+
+        except Exception:
+            return None, "error"
+
+
+def collate_fn_for_holdout(
+    batch: list[
+        tuple[Tensor, Literal["full", "incomplete"]] | tuple[None, Literal["error"]]
+    ],
+) -> tuple[Tensor | None, list[Literal["full", "incomplete", "error"]]]:
+    """
+    Custom collate function to handle batches with mixed sample types.
+    It stacks only 'full' tensors and returns all sample types.
+    """
+    full_tensors = [
+        item[0] for item in batch if item[1] == "full" and item[0] is not None
+    ]
+    sample_types: list[Literal["full", "incomplete", "error"]] = [
+        item[1] for item in batch
+    ]
+
+    if not full_tensors:
+        # If there are no full tensors, return None for the tensor part
+        return None, sample_types
+
+    # Stack only the full tensors
+    meg_batch = torch.stack(full_tensors)
+    return meg_batch, sample_types

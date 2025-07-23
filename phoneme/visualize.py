@@ -11,7 +11,7 @@ from matplotlib.figure import Figure
 from mne._fiff.meas_info import Info
 
 from utils import load_meg_data
-from config import DATA_DIR, EXAMPLE_SENSORS_MASK, SENSORS_SPEECH_MASK
+from config import DATA_DIR, VISUALIZE_SENSORS_MASK, SENSORS_SPEECH_MASK
 
 
 def meg_label_visualization(
@@ -44,7 +44,7 @@ def meg_label_visualization(
     # refer to the notebook,,, it is just a list of sensor ids
     if apply_sensor_mask:
         if isinstance(mask, str):
-            mask = EXAMPLE_SENSORS_MASK if mask == "example" else SENSORS_SPEECH_MASK
+            mask = VISUALIZE_SENSORS_MASK if mask == "example" else SENSORS_SPEECH_MASK
         try:
             meg_raw = meg_raw[mask, :]
         except Exception as e:

@@ -17,6 +17,13 @@ Train a model to distinguish speech vs. silence based on brain activity measured
 - [x] Save the data in /mnt/cai-data and then make a symlink to it
 - [x] Download *all* the data
 - [x] Train the default model given in the notebook
+- [x] Submit notebook model submission file
+- [x] Get submission file up and running
+  - [ ] Set up submission file generation right after training
+  - [ ] Make the custom dataset wrapper (like SimpleHoldoutWrapper) parametric
+- [ ] Train a new model (with different architecture)
+
+
 - [ ] Perform EDA to check differences between both labels
   - [ ] Check mean, min, max, p95 of channels between the two labels
   - [ ] Make a histogram of it
